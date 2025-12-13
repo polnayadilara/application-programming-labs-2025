@@ -6,9 +6,18 @@ from typing import Optional
 
 import sys
 
+CURRENT_FOLDER = Path(__file__).resolve().parent
+PROJECT_ROOT = CURRENT_FOLDER.parent.parent  
+ITERATOR_MODULE_PATH = PROJECT_ROOT / "lab_2" / "image_crawler"
+
+if str(ITERATOR_MODULE_PATH) not in sys.path:
+    sys.path.insert(0, str(ITERATOR_MODULE_PATH))
+
+from paths_iterator import ImageList as ImagePathIterator
+
 from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QPushButton, QFileDialog, QLabel
+    QPushButton, QFileDialog, QLabel, QMessageBox
 )
 from PyQt6.QtCore import Qt
 
@@ -20,6 +29,8 @@ class GUIApplication(QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
+        self.image_navigator: Optional[ImagePathIterator] = None
+        self.active_filepath: Optional[str] = None
         self.setup_interface()
 
     def setup_interface(self) -> None:
@@ -83,7 +94,7 @@ class GUIApplication(QMainWindow):
             self, "Выберите папку с изображениями"
         )
         if selected_dir:
-            print(f"Выбрана папка: {selected_dir}")
+            self.load_data_source(selected_dir)
 
     def choose_csv_file(self) -> None:
         """Выбор CSV-файла с метаданными"""
@@ -91,4 +102,27 @@ class GUIApplication(QMainWindow):
             self, "Выберите CSV файл", "", "CSV файлы (*.csv)"
         )
         if csv_path:
-            print(f"Выбран CSV: {csv_path}")
+            self.load_data_source(csv_path)
+
+    def load_data_source(self, data_source: str) -> None:
+        """Инициализация источника данных"""
+        try:
+            self.image_navigator = ImagePathIterator(data_source)
+            file_count = len(self.image_navigator)
+
+            source_desc = "папки" if Path(data_source).is_dir() else "CSV-файла"
+            status_text = f"Загружено {file_count} файлов из {source_desc}"
+            self.info_panel.setText(status_text)
+
+            self.btn_go_forward.setEnabled(True)
+            self.btn_go_back.setEnabled(False)
+            self.image_display.clear_canvas()
+            self.file_info_label.setText("Файл не выбран")
+            self.active_filepath = None
+
+        except Exception as err:
+            QMessageBox.critical(
+                self, 
+                "Ошибка загрузки", 
+                f"Не удалось загрузить данные:\n{str(err)}"
+            )
