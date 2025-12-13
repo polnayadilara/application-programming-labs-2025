@@ -37,8 +37,33 @@ class GUIApplication(QMainWindow):
         """Создание и настройка элементов интерфейса"""
         self.setWindowTitle("Просмотр изображений")
         self.setGeometry(150, 150, 900, 650)
+        
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #2b2b2b;
+            }
+            QLabel {
+                color: #ffffff;
+            }
+            QPushButton {
+                background-color: #3c3c3c;
+                color: white;
+                border: 1px solid #555;
+                padding: 8px 15px;
+                border-radius: 4px;
+                font-size: 12px;
+            }
+            QPushButton:hover {
+                background-color: #4a4a4a;
+            }
+            QPushButton:disabled {
+                background-color: #222;
+                color: #666;
+            }
+        """)
 
         central_panel = QWidget()
+        central_panel.setStyleSheet("background-color: #2b2b2b;")
         self.setCentralWidget(central_panel)
 
         main_panel_layout = QVBoxLayout(central_panel)
@@ -50,10 +75,28 @@ class GUIApplication(QMainWindow):
 
         self.btn_choose_directory = QPushButton("📁 Открыть папку")
         self.btn_choose_directory.clicked.connect(self.choose_directory)
+        self.btn_choose_directory.setStyleSheet("""
+            QPushButton {
+                background-color: #007acc;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #0099ff;
+            }
+        """)
         source_selection_panel.addWidget(self.btn_choose_directory)
 
         self.btn_choose_csv = QPushButton("📄 Открыть CSV")
         self.btn_choose_csv.clicked.connect(self.choose_csv_file)
+        self.btn_choose_csv.setStyleSheet("""
+            QPushButton {
+                background-color: #555;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #666;
+            }
+        """)
         source_selection_panel.addWidget(self.btn_choose_csv)
         
         source_selection_panel.addStretch()
@@ -62,6 +105,15 @@ class GUIApplication(QMainWindow):
 
         self.info_panel = QLabel("Выберите папку с картинками или CSV-файл")
         self.info_panel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.info_panel.setStyleSheet("""
+            QLabel {
+                font-size: 13px;
+                color: #aaa;
+                padding: 5px;
+                background-color: #333;
+                border-radius: 3px;
+            }
+        """)
         main_panel_layout.addWidget(self.info_panel)
 
         self.image_display = PictureCanvas()
@@ -79,6 +131,18 @@ class GUIApplication(QMainWindow):
 
         self.file_info_label = QLabel("Нет выбранного файла")
         self.file_info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.file_info_label.setWordWrap(True)
+        self.file_info_label.setStyleSheet("""
+            QLabel {
+                color: #fff;
+                font-weight: bold;
+                font-size: 13px;
+                padding: 8px;
+                background-color: #333;
+                border-radius: 4px;
+                min-width: 300px;
+            }
+        """)
         navigation_panel.addWidget(self.file_info_label)
 
         navigation_panel.addStretch()
@@ -86,6 +150,15 @@ class GUIApplication(QMainWindow):
         self.btn_go_forward = QPushButton("Вперёд ▶")
         self.btn_go_forward.clicked.connect(self.show_next_image)
         self.btn_go_forward.setEnabled(False)
+        self.btn_go_forward.setStyleSheet("""
+            QPushButton {
+                background-color: #28a745;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #34ce57;
+            }
+        """)
         navigation_panel.addWidget(self.btn_go_forward)
 
         main_panel_layout.addLayout(navigation_panel)
