@@ -71,6 +71,7 @@ class GUIApplication(QMainWindow):
         navigation_panel.setSpacing(10)
 
         self.btn_go_back = QPushButton("◀ Назад")
+        self.btn_go_back.clicked.connect(self.show_prev_image)
         self.btn_go_back.setEnabled(False)
         navigation_panel.addWidget(self.btn_go_back)
 
@@ -83,6 +84,7 @@ class GUIApplication(QMainWindow):
         navigation_panel.addStretch()
 
         self.btn_go_forward = QPushButton("Вперёд ▶")
+        self.btn_go_forward.clicked.connect(self.show_next_image)
         self.btn_go_forward.setEnabled(False)
         navigation_panel.addWidget(self.btn_go_forward)
 
@@ -125,4 +127,60 @@ class GUIApplication(QMainWindow):
                 self, 
                 "Ошибка загрузки", 
                 f"Не удалось загрузить данные:\n{str(err)}"
+            )
+
+    def show_next_image(self) -> None:
+        """Отображение следующего изображения в наборе"""
+        if not self.image_navigator:
+            return
+
+        try:
+            self.active_filepath = next(self.image_navigator)
+            self.render_picture(self.active_filepath)
+            self.btn_go_back.setEnabled(True)
+
+            if self.image_navigator.index >= len(self.image_navigator):
+                self.btn_go_forward.setEnabled(False)
+
+        except StopIteration:
+            self.btn_go_forward.setEnabled(False)
+            QMessageBox.information(
+                self, 
+                "Конец", 
+                "Все изображения просмотрены"
+            )
+
+    def show_prev_image(self) -> None:
+        """Отображение предыдущего изображения"""
+        if not self.image_navigator or self.image_navigator.index <= 1:
+            return
+
+        self.image_navigator.index = max(0, self.image_navigator.index - 2)
+        self.show_next_image()
+
+        if self.image_navigator.index == 1:
+            self.btn_go_back.setEnabled(False)
+
+        self.btn_go_forward.setEnabled(True)
+
+    def render_picture(self, picture_path: str) -> None:
+        """Визуализация выбранного изображения"""
+        try:
+            self.image_display.set_picture(picture_path)
+            filename = Path(picture_path).name
+            
+            if self.image_navigator:
+                current_num = self.image_navigator.index
+                total_count = len(self.image_navigator)
+                file_info = f"{current_num}/{total_count} - {filename}"
+            else:
+                file_info = f"Файл: {filename}"
+                
+            self.file_info_label.setText(file_info)
+
+        except Exception as err:
+            QMessageBox.warning(
+                self, 
+                "Ошибка", 
+                f"Не удалось открыть файл:\n{str(err)}"
             )
