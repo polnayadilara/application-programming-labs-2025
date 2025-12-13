@@ -7,7 +7,7 @@ import numpy as np
 
 def create_width_distribution_plot(df: pd.DataFrame, output_path: str, figsize: Tuple[int, int] = (14, 6)) -> None:
     """
-    Создает и сохраняет график распределения ширины изображений.
+    Создает и сохраняет график распределения ширины изображений
     """
     
     fig, ax = plt.subplots(1, 1, figsize=figsize)

@@ -14,7 +14,7 @@ from image_viewer import create_width_distribution_plot
 
 def parse_arguments() -> argparse.Namespace:
     """
-    Парсит аргументы командной строки.
+    Парсит аргументы командной строки
     """
     
     parser = argparse.ArgumentParser(

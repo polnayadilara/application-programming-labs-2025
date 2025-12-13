@@ -5,7 +5,7 @@ from typing import Optional, Tuple, List
 
 def load_dataframe_from_csv(csv_path: str) -> pd.DataFrame:
     """
-    Загружает DataFrame из CSV файла.
+    Загружает DataFrame из CSV файла
     """
     
     df = pd.read_csv(csv_path)
